@@ -1,6 +1,6 @@
 package dev.lazurite.corduroy.impl.mixin;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import dev.lazurite.corduroy.api.ViewStack;
 import dev.lazurite.corduroy.api.View;
 import net.minecraft.client.gui.Gui;
@@ -17,7 +17,7 @@ public class GuiMixin {
      * @see View#shouldRenderHud
      */
     @Inject(method = "renderHotbar", at = @At("HEAD"), cancellable = true)
-    protected void renderHotbar$HEAD(float tickDelta, PoseStack matrices, CallbackInfo ci) {
+    protected void renderHotbar$HEAD(float tickDelta, GuiGraphics matrices, CallbackInfo ci) {
         ViewStack.getInstance().peek().filter(view -> !view.shouldRenderHud()).ifPresent(view -> ci.cancel());
     }
 
@@ -26,7 +26,7 @@ public class GuiMixin {
      * @see View#shouldRenderHud
      */
     @Inject(method = "renderCrosshair", at = @At("HEAD"), cancellable = true)
-    private void renderCrosshair$HEAD(PoseStack matrices, CallbackInfo ci) {
+    private void renderCrosshair$HEAD(GuiGraphics matrices, CallbackInfo ci) {
         ViewStack.getInstance().peek().filter(view -> !view.shouldRenderHud()).ifPresent(view -> ci.cancel());
     }
 
