@@ -69,20 +69,21 @@ public class GameRendererMixin {
     }
 
     /**
+     * 1.21.2: getFieldOfViewModifier gained (firstPerson, fovEffectScale) params.
      * @see View#shouldFOVChangeOnMovement
      */
     @Redirect(
             method = "tickFov",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/player/AbstractClientPlayer;getFieldOfViewModifier()F"
+                    target = "Lnet/minecraft/client/player/AbstractClientPlayer;getFieldOfViewModifier(ZF)F"
             )
     )
-    private float tickFov$HEAD(AbstractClientPlayer player) {
+    private float tickFov$HEAD(AbstractClientPlayer player, boolean firstPerson, float fovEffectScale) {
         return ViewStack.getInstance().peek()
                 .filter(view -> !view.shouldFOVChangeOnMovement())
                 .map(view -> 1.0f)
-                .orElse(player.getFieldOfViewModifier());
+                .orElse(player.getFieldOfViewModifier(firstPerson, fovEffectScale));
     }
 
     @Redirect(
