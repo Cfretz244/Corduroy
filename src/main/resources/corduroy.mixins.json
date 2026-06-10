@@ -4,6 +4,7 @@
   "package": "dev.lazurite.corduroy.impl.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "AbstractClientPlayerMixin",
     "GameRendererMixin",
     "GuiMixin",
     "KeyboardInputMixin",

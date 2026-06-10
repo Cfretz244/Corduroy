@@ -4,7 +4,9 @@
   "version": "${version}",
   "name": "Corduroy",
   "description": "Advanced camera manipulation for Fabric.",
-  "authors": [ "The Lazurite Team" ],
+  "authors": [
+    "The Lazurite Team"
+  ],
   "contact": {
     "homepage": "https://lazurite.dev",
     "sources": "https://github.com/lazuritemc/corduroy",
@@ -12,7 +14,9 @@
   },
   "license": "MIT",
   "environment": "*",
-  "mixins": [ "corduroy.mixins.json" ],
+  "mixins": [
+    "corduroy.mixins.json"
+  ],
   "accessWidener": "corduroy.accessWidener",
   "depends": {
     "fabricloader": ">=0.14",
@@ -20,8 +24,12 @@
   },
   "custom": {
     "modmenu": {
-      "links": { "modmenu.discord": "https://discord.gg/NNPPHN7b3P" },
-      "badges": [ "library" ]
+      "links": {
+        "modmenu.discord": "https://discord.gg/NNPPHN7b3P"
+      },
+      "badges": [
+        "library"
+      ]
     }
   }
 }

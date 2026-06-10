@@ -2,8 +2,6 @@ package dev.lazurite.corduroy.impl;
 
 import dev.lazurite.corduroy.api.View;
 import net.minecraft.client.Camera;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.BlockGetter;
 
 public class CorduroyCamera extends Camera {
 
@@ -11,7 +9,7 @@ public class CorduroyCamera extends Camera {
 
     public CorduroyCamera(Camera parentCamera) {
         this.parentCamera = parentCamera;
-        this.entity = parentCamera.getEntity();
+        this.entity = parentCamera.entity; // 26.1: getEntity() removed; field is access-widened
     }
 
     public Camera getParent() {
@@ -25,21 +23,20 @@ public class CorduroyCamera extends Camera {
 
     /**
      * Since 1.21, the world view matrix is derived directly from {@code camera.rotation()}
-     * (conjugated) in GameRenderer — so storing the View's quaternion with the exact vanilla
-     * conventions is all that's needed for FPV orientation, including roll. Vanilla's basis:
-     * forwards = q*(0,0,-1), up = q*(0,1,0), left = q*(-1,0,0); the xRot/yRot floats only feed
-     * the sound listener and other non-matrix consumers, derived here from the look vector.
+     * (conjugated) — so storing the View's quaternion with the exact vanilla conventions is all
+     * that's needed for FPV orientation, including roll. Vanilla's basis: forwards = q*(0,0,-1),
+     * up = q*(0,1,0), left = q*(-1,0,0); the xRot/yRot floats only feed the sound listener and
+     * other non-matrix consumers, derived here from the look vector.
+     *
+     * 26.1: Camera.setup() became update(DeltaTracker) -> alignWithEntity(partialTicks) (made
+     * overridable via access widener); the rest of update (fov/frustum/perspective) runs in super.
      */
     @Override
-    public void setup(BlockGetter blockGetter, Entity entity, boolean bl, boolean bl2, float f) {
-        this.initialized = true;
-        this.level = blockGetter;
-        this.entity = entity;
-
+    public void alignWithEntity(float partialTicks) {
         var view = this.getView();
-        this.position = view.getPosition(f);
+        this.position = view.getPosition(partialTicks);
         this.blockPosition.set(this.position.x, this.position.y, this.position.z);
-        this.rotation.set(view.getRotation(f));
+        this.rotation.set(view.getRotation(partialTicks));
         this.forwards.set(0.0F, 0.0F, -1.0F);
         this.forwards.rotate(this.rotation);
         this.up.set(0.0F, 1.0F, 0.0F);
@@ -48,7 +45,6 @@ public class CorduroyCamera extends Camera {
         this.left.rotate(this.rotation);
         this.yRot = (float) Math.toDegrees(Math.atan2(-this.forwards.x(), this.forwards.z()));
         this.xRot = (float) Math.toDegrees(-Math.asin(Math.max(-1.0f, Math.min(1.0f, this.forwards.y()))));
-        this.partialTickTime = f;
 
         view.onRender();
     }

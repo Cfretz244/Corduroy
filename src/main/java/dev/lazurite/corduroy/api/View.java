@@ -21,7 +21,7 @@ public abstract class View {
     private Quaternionf prevRotation;
 
     public View() {
-        var camPos = this.getCamera().getPosition();
+        var camPos = this.getCamera().position();
         var camRot = this.getCamera().rotation();
         this.position = new Vec3(camPos.x, camPos.y, camPos.z);
         this.prevPosition = new Vec3(camPos.x, camPos.y, camPos.z);

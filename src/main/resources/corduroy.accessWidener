@@ -1,4 +1,4 @@
-accessWidener	v1	named
+accessWidener	v1	official
 accessible field net/minecraft/client/Camera position Lnet/minecraft/world/phys/Vec3;
 accessible field net/minecraft/client/Camera rotation Lorg/joml/Quaternionf;
 mutable field net/minecraft/client/Camera rotation Lorg/joml/Quaternionf;
@@ -8,9 +8,11 @@ accessible field net/minecraft/client/Camera left Lorg/joml/Vector3f;
 accessible field net/minecraft/client/renderer/GameRenderer mainCamera Lnet/minecraft/client/Camera;
 mutable field net/minecraft/client/renderer/GameRenderer mainCamera Lnet/minecraft/client/Camera;
 accessible field net/minecraft/client/Camera initialized Z
-accessible field net/minecraft/client/Camera level Lnet/minecraft/world/level/BlockGetter;
+accessible field net/minecraft/client/Camera level Lnet/minecraft/world/level/Level;
 accessible field net/minecraft/client/Camera entity Lnet/minecraft/world/entity/Entity;
 accessible field net/minecraft/client/Camera blockPosition Lnet/minecraft/core/BlockPos$MutableBlockPos;
 accessible field net/minecraft/client/Camera xRot F
 accessible field net/minecraft/client/Camera yRot F
-accessible field net/minecraft/client/Camera partialTickTime F
+extendable method net/minecraft/client/Camera alignWithEntity (F)V
+accessible method net/minecraft/client/Camera move (FFF)V
+accessible method net/minecraft/client/Camera getMaxZoom (F)F

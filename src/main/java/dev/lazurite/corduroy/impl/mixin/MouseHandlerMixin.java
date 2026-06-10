@@ -36,7 +36,8 @@ class MouseHandlerMixin {
      * @see View#shouldPlayerControl
      */
     @Redirect(
-            method = "onPress",
+            // 26.1: onPress became onButton(long, MouseButtonInfo, int).
+            method = "onButton",
             require = 0,
             at = @At(
                     value = "INVOKE",
@@ -54,7 +55,8 @@ class MouseHandlerMixin {
      * @see View#shouldPlayerControl
      */
     @Redirect(
-            method = "onPress",
+            // 26.1: onPress became onButton(long, MouseButtonInfo, int).
+            method = "onButton",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/client/KeyMapping;click(Lcom/mojang/blaze3d/platform/InputConstants$Key;)V"

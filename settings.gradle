@@ -11,4 +11,4 @@ pluginManagement {
 
 rootProject.name = 'corduroy'
 
-include 'corduroy-example'
+// corduroy-example excluded from the 26.1 build (demo mod, not ported)

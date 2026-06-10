@@ -1,47 +1,45 @@
 plugins {
-	id 'fabric-loom' version "$loom_version"
+	id 'net.fabricmc.fabric-loom' version "$loom_version"
 	id 'maven-publish'
 }
+
+version corduroy_version
+group maven_group
 
 loom {
 	accessWidenerPath = file("src/main/resources/corduroy.accessWidener")
 }
 
-allprojects {
-	apply plugin: 'fabric-loom'
-
-	version corduroy_version
-	group maven_group
-	jar.from 'LICENSE'
-
-	java {
-		toolchain {
-			languageVersion = JavaLanguageVersion.of(21)
-		}
-
-		withSourcesJar()
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
 	}
 
-	dependencies {
-		minecraft "com.mojang:minecraft:$minecraft_version"
-		mappings loom.officialMojangMappings()
-		modImplementation "net.fabricmc:fabric-loader:$loader_version"
-	}
+	withSourcesJar()
+}
 
-	processResources {
-		inputs.property "version", version
+dependencies {
+	minecraft "com.mojang:minecraft:$minecraft_version"
 
-		filesMatching("fabric.mod.json") {
-			expand "version": project.version
-		}
+	// 26.1+: Minecraft is unobfuscated — no mappings, and mod deps are plain implementation.
+	implementation "net.fabricmc:fabric-loader:$loader_version"
+}
+
+jar.from 'LICENSE'
+
+processResources {
+	inputs.property "version", version
+
+	filesMatching("fabric.mod.json") {
+		expand "version": project.version
 	}
 }
 
-publishing {
-	repositories {
-		mavenLocal()
-	}
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 25
+}
 
+publishing {
 	publications {
 		corduroy MavenPublication, {
 			from components.java
