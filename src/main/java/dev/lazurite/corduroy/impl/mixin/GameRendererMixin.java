@@ -5,6 +5,7 @@ import com.mojang.math.Axis;
 import dev.lazurite.corduroy.api.ViewStack;
 import dev.lazurite.corduroy.api.View;
 import net.minecraft.client.Camera;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.GameRenderer;
 import org.joml.Matrix4f;
@@ -23,26 +24,21 @@ public class GameRendererMixin {
 
     /**
      * Rotates the screen according to the orientation of the camera.
+     * 1.21: renderLevel(DeltaTracker) no longer receives a PoseStack — the view orientation moved to
+     * the Matrix4f pipeline. CorduroyCamera.setup() still drives the base camera transform; the
+     * residual screen-orientation override is re-expressed in the CP2b render sub-gate (TODO).
      */
     @Inject(method = "renderLevel", at = @At("HEAD"))
-    public void renderLevel$HEAD(float f, long l, PoseStack poseStack, CallbackInfo ci) {
-        ViewStack.getInstance().peek().ifPresent(view -> {
-            var rotation = new Quaternionf(this.mainCamera.rotation());
-            rotation.mul(Axis.YP.rotationDegrees(180));
-            rotation.set(rotation.x(), -rotation.y(), rotation.z(), -rotation.w());
-
-            var mat = rotation.get(new Matrix4f());
-            mat.transpose();
-            poseStack.last().pose().mul(mat);
-        });
+    public void renderLevel$HEAD(DeltaTracker deltaTracker, CallbackInfo ci) {
     }
 
     /**
      * Cancels player hand rendering.
+     * 1.21: renderItemInHand(Camera, float, Matrix4f) — no PoseStack.
      * @see View#shouldRenderHand
      */
     @Inject(method = "renderItemInHand", at = @At("HEAD"), cancellable = true)
-    public void renderHand$HEAD(PoseStack matrices, Camera camera, float tickDelta, CallbackInfo ci) {
+    public void renderHand$HEAD(Camera camera, float tickDelta, Matrix4f matrix4f, CallbackInfo ci) {
         ViewStack.getInstance().peek().filter(view -> !view.shouldRenderHand()).ifPresent(view -> ci.cancel());
     }
 
