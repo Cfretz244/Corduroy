@@ -1,11 +1,9 @@
 package dev.lazurite.corduroy.impl;
 
 import dev.lazurite.corduroy.api.View;
-import dev.lazurite.corduroy.impl.util.QuaternionUtil;
 import net.minecraft.client.Camera;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.BlockGetter;
-import org.joml.Quaternionf;
 
 public class CorduroyCamera extends Camera {
 
@@ -25,6 +23,13 @@ public class CorduroyCamera extends Camera {
         return ViewStackImpl.INSTANCE.peek().get();
     }
 
+    /**
+     * Since 1.21, the world view matrix is derived directly from {@code camera.rotation()}
+     * (conjugated) in GameRenderer — so storing the View's quaternion with the exact vanilla
+     * conventions is all that's needed for FPV orientation, including roll. Vanilla's basis:
+     * forwards = q*(0,0,-1), up = q*(0,1,0), left = q*(-1,0,0); the xRot/yRot floats only feed
+     * the sound listener and other non-matrix consumers, derived here from the look vector.
+     */
     @Override
     public void setup(BlockGetter blockGetter, Entity entity, boolean bl, boolean bl2, float f) {
         this.initialized = true;
@@ -34,15 +39,16 @@ public class CorduroyCamera extends Camera {
         var view = this.getView();
         this.position = view.getPosition(f);
         this.blockPosition.set(this.position.x, this.position.y, this.position.z);
-        this.rotation = new Quaternionf(view.getRotation(f));
-        this.forwards.set(0.0F, 0.0F, 1.0F);
+        this.rotation.set(view.getRotation(f));
+        this.forwards.set(0.0F, 0.0F, -1.0F);
         this.forwards.rotate(this.rotation);
         this.up.set(0.0F, 1.0F, 0.0F);
         this.up.rotate(this.rotation);
-        this.left.set(1.0F, 0.0F, 0.0F);
+        this.left.set(-1.0F, 0.0F, 0.0F);
         this.left.rotate(this.rotation);
-        this.xRot = QuaternionUtil.getYaw(this.rotation);
-        this.yRot = QuaternionUtil.getPitch(this.rotation);
+        this.yRot = (float) Math.toDegrees(Math.atan2(-this.forwards.x(), this.forwards.z()));
+        this.xRot = (float) Math.toDegrees(-Math.asin(Math.max(-1.0f, Math.min(1.0f, this.forwards.y()))));
+        this.partialTickTime = f;
 
         view.onRender();
     }

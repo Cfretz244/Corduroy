@@ -5,6 +5,7 @@ import dev.lazurite.corduroy.api.View;
 import net.minecraft.client.player.ClientInput;
 import net.minecraft.client.player.KeyboardInput;
 import net.minecraft.world.entity.player.Input;
+import net.minecraft.world.phys.Vec2;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -22,8 +23,8 @@ public abstract class KeyboardInputMixin extends ClientInput {
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     public void tick$HEAD(CallbackInfo ci) {
         ViewStack.getInstance().peek().filter(view -> !view.shouldPlayerControl()).ifPresent(view -> {
-            this.forwardImpulse = 0.0f;
-            this.leftImpulse = 0.0f;
+            // 1.21.8: the impulse floats merged into a single move vector.
+            this.moveVector = Vec2.ZERO;
             this.keyPresses = Input.EMPTY;
             ci.cancel();
         });

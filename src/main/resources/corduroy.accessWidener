@@ -13,3 +13,4 @@ accessible field net/minecraft/client/Camera entity Lnet/minecraft/world/entity/
 accessible field net/minecraft/client/Camera blockPosition Lnet/minecraft/core/BlockPos$MutableBlockPos;
 accessible field net/minecraft/client/Camera xRot F
 accessible field net/minecraft/client/Camera yRot F
+accessible field net/minecraft/client/Camera partialTickTime F
