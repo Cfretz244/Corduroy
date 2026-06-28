@@ -64,11 +64,13 @@ public class CorduroyCamera extends Camera {
             final var mc = Minecraft.getInstance();
             final var ppos = mc.player == null ? null : mc.player.position();
             DEBUG_LOG.info(
-                "view={} firstPerson={} initialized={} levelNull={} entity={} camEntity={} | pos=({}, {}, {}) | rot=({}, {}, {}, {}) | fwd=({}, {}, {}) up=({}, {}, {}) | xRot={} yRot={} | playerPos={}",
+                "view={} firstPerson={} detached={} initialized={} levelNull={} fov={} entity={} camEntity={} | pos=({}, {}, {}) | rot=({}, {}, {}, {}) | fwd=({}, {}, {}) up=({}, {}, {}) | xRot={} yRot={} | playerPos={}",
                 view.getClass().getSimpleName(),
                 mc.options.getCameraType().isFirstPerson(),
+                this.isDetached(),
                 this.isInitialized(),
                 this.level == null,
+                this.getFov(),
                 this.entity == null ? "null" : this.entity.getClass().getSimpleName(),
                 mc.getCameraEntity() == null ? "null" : mc.getCameraEntity().getClass().getSimpleName(),
                 this.position.x, this.position.y, this.position.z,
