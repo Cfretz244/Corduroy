@@ -2,8 +2,15 @@ package dev.lazurite.corduroy.impl;
 
 import dev.lazurite.corduroy.api.View;
 import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CorduroyCamera extends Camera {
+
+    // TEMP DIAGNOSTIC: remove once the FPV black-screen render bug is solved.
+    private static final Logger DEBUG_LOG = LoggerFactory.getLogger("CorduroyCamera-DEBUG");
+    private static int debugFrame = 0;
 
     private final Camera parentCamera;
 
@@ -50,6 +57,28 @@ public class CorduroyCamera extends Camera {
         this.xRot = (float) Math.toDegrees(-Math.asin(Math.max(-1.0f, Math.min(1.0f, this.forwards.y()))));
 
         view.onRender();
+
+        // TEMP DIAGNOSTIC: log camera state ~once/sec while a Corduroy view is active, to find
+        // the FPV black-screen cause (degenerate position/rotation, uninitialized camera, etc.).
+        if (debugFrame++ % 40 == 0) {
+            final var mc = Minecraft.getInstance();
+            final var ppos = mc.player == null ? null : mc.player.position();
+            DEBUG_LOG.info(
+                "view={} firstPerson={} initialized={} levelNull={} entity={} camEntity={} | pos=({}, {}, {}) | rot=({}, {}, {}, {}) | fwd=({}, {}, {}) up=({}, {}, {}) | xRot={} yRot={} | playerPos={}",
+                view.getClass().getSimpleName(),
+                mc.options.getCameraType().isFirstPerson(),
+                this.isInitialized(),
+                this.level == null,
+                this.entity == null ? "null" : this.entity.getClass().getSimpleName(),
+                mc.getCameraEntity() == null ? "null" : mc.getCameraEntity().getClass().getSimpleName(),
+                this.position.x, this.position.y, this.position.z,
+                this.rotation.x, this.rotation.y, this.rotation.z, this.rotation.w,
+                this.forwards.x(), this.forwards.y(), this.forwards.z(),
+                this.up.x(), this.up.y(), this.up.z(),
+                this.xRot, this.yRot,
+                ppos
+            );
+        }
     }
 
     @Override
