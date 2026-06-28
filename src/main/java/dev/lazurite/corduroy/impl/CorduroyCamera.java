@@ -49,6 +49,14 @@ public class CorduroyCamera extends Camera {
         this.yRot = (float) Math.toDegrees(Math.atan2(-this.forwards.x(), this.forwards.z()));
         this.xRot = (float) Math.toDegrees(-Math.asin(Math.max(-1.0f, Math.min(1.0f, this.forwards.y()))));
 
+        // 26.1: Camera caches its view-rotation matrices and only rebuilds them from rotation()
+        // when matrixPropertiesDirty is set (vanilla trips it in setRotation()). We assign the
+        // rotation quaternion directly (to keep roll), bypassing that setter, so without this the
+        // renderer keeps using the stale cached orientation and the view never turns. Force all
+        // cached matrices to rebuild from the orientation we just set. (position has no such cache,
+        // which is why translation tracked but rotation didn't.)
+        this.matrixPropertiesDirty = -1;
+
         view.onRender();
     }
 
