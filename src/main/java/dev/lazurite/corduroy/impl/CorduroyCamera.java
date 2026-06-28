@@ -10,6 +10,9 @@ public class CorduroyCamera extends Camera {
     public CorduroyCamera(Camera parentCamera) {
         this.parentCamera = parentCamera;
         this.entity = parentCamera.entity; // 26.1: getEntity() removed; field is access-widened
+        this.level = parentCamera.level;   // 26.1: getCameraEntityPartialTicks() derefs this.level
+                                           // (tickRateManager()); vanilla sets it via setLevel(), which
+                                           // never runs on this wrapper, so copy it from the parent.
     }
 
     public Camera getParent() {
